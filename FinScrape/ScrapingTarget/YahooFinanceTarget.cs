@@ -9,13 +9,17 @@ using OpenQA.Selenium.Support.UI;
 
 namespace FinScrape.ScrapingTarget
 {
-	class YahooFinanceTarget : IScrapingTarget
+	public class YahooFinanceTarget : IScrapingTarget
 	{
 		struct SummaryPage
 		{
 			public struct ID
 			{
 				public const string Description = "Col2-9-QuoteModule-Proxy";
+				public const string QuoteHeaderInfo = "quote-header-info";
+				public const string QuoteSummary = "quote-summary";
+
+
 			}
 
 			public struct XPath
@@ -113,6 +117,9 @@ namespace FinScrape.ScrapingTarget
 		readonly IWebDriver _driver;
 		readonly WebDriverWait _wait;
 		readonly Actions _actions;
+		string _quoteHeaderInfo;
+		string _quoteSummary;
+		string _lastTicker;
 
 		public YahooFinanceTarget(IWebDriver driver, WebDriverWait wait, Actions actions)
 		{
@@ -121,25 +128,90 @@ namespace FinScrape.ScrapingTarget
 			_actions = actions;
 		}
 
-		public string GetDescription(string ticker)
+		public string GetQuoteHeaderInfo(string ticker)
 		{
-			return SeleniumHelper.GetElemByID(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.ID.Description).Text;
+			if (ticker != _lastTicker)
+				_quoteHeaderInfo = SeleniumHelper.GetElemByID(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.ID.QuoteHeaderInfo).Text;
+
+            _lastTicker = ticker;
+
+            return _quoteHeaderInfo;
 		}
+
+
+        /* Example output:
+Previous Close 106.60
+Open 107.00
+Bid 0.00 x 0
+Ask 0.00 x 0
+Day's Range 106.68 - 108.41
+52 Week Range 65.63 - 108.41
+Volume 6,786,305
+Avg. Volume 8,923,319
+Market Cap 321.092B
+Beta 0.10
+PE Ratio (TTM) 28.77
+EPS (TTM) 3.77
+Earnings Date Feb 20, 2018
+Forward Dividend & Yield 2.04 (1.91%)
+Ex-Dividend Date 2017-12-07
+1y Target Est 105.13
+Trade prices are not sourced from all markets
+        //*/
+        public string GetQuoteSummary(string ticker)
+		{
+			if (ticker != _lastTicker)
+				_quoteSummary = SeleniumHelper.GetElemByID(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.ID.QuoteSummary).Text;
+
+		    _lastTicker = ticker;
+
+		    return _quoteSummary;
+		}
+
+		public string GetDescription(string ticker)
+			=> SeleniumHelper.GetElemByID(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.ID.Description).Text;
 
 		public string GetName(string ticker)
-		{
-			return SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.Name).Text;
-		}
+			=> GetQuoteHeaderInfo(ticker).Split('\n')[0].Trim();
 
 		public string GetPrice(string ticker)
-		{
-			return SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.Price).Text;
-		}
+            => GetQuoteHeaderInfo(ticker).Split('\n')[3].Trim();
 
-		public string GetMarketCap(string ticker)
-		{
-			return SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetStatisticUrl(ticker), StatisticsPage.XPath.MarketCap).Text;
-		}
+        public string GetPreviousClose(string ticker)
+			=> SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.PrevClose).Text;
+
+		public string GetOpen(string ticker)
+			=> SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.Open).Text;
+
+		public string GetBid(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.Bid).Text;
+
+		public string GetAsk(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.Ask).Text;
+
+		public string GetDaysRange(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.DaysRange).Text;
+
+		public string GetYearsRange(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.YearsRange).Text;
+
+		public string GetVolume(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.Volume).Text;
+
+		public string GetAvgVolume(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.AvgVolume).Text;
+
+		public string GetSummMarketCap(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.MarketCap).Text;
+
+		public string GetBeta(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.Beta).Text;
+
+		public string GetPERatio(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.PERatio).Text;
+
+		public string GetEPSRatio(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.EPSRatio).Text;
+
+		public string GetStatMarketCap(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetStatisticUrl(ticker), StatisticsPage.XPath.MarketCap).Text;
+
+		public string GetEarningsDate(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.EarningsDate).Text;
+
+		public string GetDividendAndYield(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.DividendAndYield).Text;
+
+		public string GetExDividendDate(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.ExDividendDate).Text;
+
+		public string GetOneYearTarget(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.OneYearTarget).Text;
 
 		public string GetTargetName() => "Yahoo Finance";
 

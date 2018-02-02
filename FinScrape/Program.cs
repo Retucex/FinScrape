@@ -12,7 +12,7 @@ namespace FinScrape
 			ConfigureLogger();
 
 			Log.Debug("Arguments passed in: {args}", args);
-			Scraper.Start(args);
+			Scraper.ScrapeTickers(args);
 
 			Log.Debug("Program has exited");
 		}

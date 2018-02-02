@@ -10,7 +10,7 @@ using Serilog;
 
 namespace FinScrape
 {
-	static class SeleniumHelper
+	public static class SeleniumHelper
 	{
 		public static IWebElement GetElemByID(IWebDriver driver, WebDriverWait wait, Actions actions, string url, string id)
 		{
