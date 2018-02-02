@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace FinScrape.ScrapingTarget
 {
-	interface IScrapingTarget
+	public interface IScrapingTarget
 	{
 		string GetDescription(string ticker);
 		string GetPrice(string ticker);

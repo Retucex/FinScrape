@@ -10,9 +10,20 @@ using Serilog;
 
 namespace FinScrape
 {
-	public static class SeleniumHelper
+	public class SeleniumWebPageRenderer : IWebPageRenderer
 	{
-		public static IWebElement GetElemByID(IWebDriver driver, WebDriverWait wait, Actions actions, string url, string id)
+		readonly IWebDriver driver;
+		readonly WebDriverWait wait;
+		readonly Actions browserActions;
+
+		public SeleniumWebPageRenderer(IWebDriver driver, WebDriverWait wait, Actions browserActions)
+		{
+			this.driver = driver;
+			this.wait = wait;
+			this.browserActions = browserActions;
+		}
+
+		public IWebElement GetElemByID(string url, string id)
 		{
 			Log.Debug("Get Elem by ID '{id}' at {url}", id, url);
 
@@ -27,8 +38,8 @@ namespace FinScrape
 
 			try
 			{
-				actions.MoveToElement(elem);
-				actions.Perform();
+				browserActions.MoveToElement(elem);
+				browserActions.Perform();
 			}
 			catch (Exception e)
 			{
@@ -38,7 +49,7 @@ namespace FinScrape
 			return elem;
 		}
 
-		public static IWebElement GetElemByXPath(IWebDriver driver, WebDriverWait wait, Actions actions, string url, string xpath)
+		public IWebElement GetElemByXPath(string url, string xpath)
 		{
 			Log.Debug("Get Elem by XPath '{xpath}' at {url}", xpath, url);
 
@@ -53,17 +64,19 @@ namespace FinScrape
 
 			try
 			{
-				actions.MoveToElement(elem);
-				actions.Perform();
+				browserActions.MoveToElement(elem);
+				browserActions.Perform();
 			}
 			catch (Exception e)
 			{
 				Log.Error(e, "Unable to navigate to element.");
 			}
-			
+
 			return elem;
 		}
 
-		public static string GetText(this IWebElement webElement) => webElement.GetAttribute("textContent");
+		public static string GetText(IWebElement webElement) => webElement.GetAttribute("textContent");
+
+		~SeleniumWebPageRenderer() => driver.Quit();
 	}
 }

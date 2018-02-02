@@ -61,12 +61,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Company.cs" />
+    <Compile Include="IFinancialScraper.cs" />
+    <Compile Include="IWebPageRenderer.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Scraper.cs" />
+    <Compile Include="FinancialScraper.cs" />
     <Compile Include="ScrapingTarget\IScrapingTarget.cs" />
     <Compile Include="ScrapingTarget\YahooFinanceTarget.cs" />
-    <Compile Include="SeleniumHelper.cs" />
+    <Compile Include="SeleniumWebPageRenderer.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

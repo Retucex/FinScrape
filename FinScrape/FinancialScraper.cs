@@ -12,52 +12,24 @@ using Serilog;
 
 namespace FinScrape
 {
-	public static class Scraper
+	public class FinancialScraper : IFinancialScraper
 	{
-	    static IWebDriver _driver;
-	    static Actions _actions;
-	    static WebDriverWait _wait;
+		readonly IScrapingTarget target;
 
-	    public static void ScrapeTicker(string ticker)
-	    {
-            InitWebDriver();
-            var yahooScrape = new YahooFinanceTarget(_driver, _wait, _actions);
-            ScrapeFinancialData(ticker, yahooScrape);
-            QuitWebDriver();
-
-        }
-
-		public static void ScrapeTickers(string[] tickers)
+		public FinancialScraper(IScrapingTarget target)
 		{
-            InitWebDriver();
-            var yahooScrape = new YahooFinanceTarget(_driver, _wait, _actions);
+			this.target = target;
+		}
 
+		public void ScrapeTickers(string[] tickers)
+		{
             foreach (var ticker in tickers)
             {
-                ScrapeFinancialData(ticker, yahooScrape);
+                ScrapeFinancialData(ticker, target);
             }
-            QuitWebDriver();
         }
 
-        static void InitWebDriver()
-        {
-            var options = new ChromeOptions();
-            options.AddArgument("headless");
-            options.AddArgument("--log-level=3");
-            options.AddArgument("--silent");
-
-            _driver = new ChromeDriver(options);
-
-            _actions = new Actions(_driver);
-            _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(30));
-        }
-
-        static void QuitWebDriver()
-        {
-            _driver.Quit();
-        }
-
-        static Company ScrapeFinancialData(string ticker, IScrapingTarget scrapingTarget)
+        Company ScrapeFinancialData(string ticker, IScrapingTarget scrapingTarget)
 		{
 			var company = new Company();
 

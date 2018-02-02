@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using FinScrape;
 using FinScrape.ScrapingTarget;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -15,11 +16,11 @@ namespace FinScrape.Tests
     [TestFixture]
     public class YahooFinanceTargetTest
     {
-        IWebDriver _driver;
-        WebDriverWait _wait;
-        Actions _actions;
-        YahooFinanceTarget _yahooFinanceTarget;
-        string _ticker;
+        IWebDriver driver;
+        WebDriverWait wait;
+        Actions actions;
+        YahooFinanceTarget yahooFinanceTarget;
+        string ticker;
         
         [OneTimeSetUp]
         public void TestSetup()
@@ -29,27 +30,28 @@ namespace FinScrape.Tests
             options.AddArgument("--log-level=3");
             options.AddArgument("--silent");
 
-            _driver = new ChromeDriver(options);
+            driver = new ChromeDriver(options);
+            wait = new WebDriverWait(driver, TimeSpan.FromSeconds(10));
+            actions = new Actions(driver);
 
-            _wait = new WebDriverWait(_driver, TimeSpan.FromSeconds(10));
-            _actions = new Actions(_driver);
+			var webPageRenderer = new SeleniumWebPageRenderer(driver, wait, actions);
 
-            _yahooFinanceTarget = new YahooFinanceTarget(_driver, _wait, _actions);
+            yahooFinanceTarget = new YahooFinanceTarget(webPageRenderer);
 
-            _ticker = "wmt";
+            ticker = "wmt";
         }
 
         [OneTimeTearDown]
         public void TestTearDown()
         {
-            _driver.Quit();
-            _driver = null;
+            driver.Quit();
+            driver = null;
         }
 
         [Test]
         public void ShouldGetQuoteHeaderInfo()
         {
-            var data = _yahooFinanceTarget.GetQuoteHeaderInfo(_ticker);
+            var data = yahooFinanceTarget.GetQuoteHeaderInfo(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -58,7 +60,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetQuoteSummary()
         {
-            var data = _yahooFinanceTarget.GetQuoteSummary(_ticker);
+            var data = yahooFinanceTarget.GetQuoteSummary(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -67,7 +69,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetNameCompany()
         {
-            var data = _yahooFinanceTarget.GetName(_ticker);
+            var data = yahooFinanceTarget.GetName(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -76,7 +78,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetPrice()
         {
-            var data = _yahooFinanceTarget.GetPrice(_ticker);
+            var data = yahooFinanceTarget.GetPrice(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -85,7 +87,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetAsk()
         {
-            var data = _yahooFinanceTarget.GetAsk(_ticker);
+            var data = yahooFinanceTarget.GetAsk(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -95,7 +97,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetAvgVolume()
         {
-            var data = _yahooFinanceTarget.GetAvgVolume(_ticker);
+            var data = yahooFinanceTarget.GetAvgVolume(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -104,7 +106,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetBeta()
         {
-            var data = _yahooFinanceTarget.GetBeta(_ticker);
+            var data = yahooFinanceTarget.GetBeta(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -113,7 +115,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetBid()
         {
-            var data = _yahooFinanceTarget.GetBid(_ticker);
+            var data = yahooFinanceTarget.GetBid(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -122,7 +124,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetDaysRange()
         {
-            var data = _yahooFinanceTarget.GetDaysRange(_ticker);
+            var data = yahooFinanceTarget.GetDaysRange(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -131,7 +133,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetDescription()
         {
-            var data = _yahooFinanceTarget.GetDescription(_ticker);
+            var data = yahooFinanceTarget.GetDescription(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -140,7 +142,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetDividendAndYield()
         {
-            var data = _yahooFinanceTarget.GetDividendAndYield(_ticker);
+            var data = yahooFinanceTarget.GetDividendAndYield(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -149,7 +151,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetEPSRatio()
         {
-            var data = _yahooFinanceTarget.GetEPSRatio(_ticker);
+            var data = yahooFinanceTarget.GetEPSRatio(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -158,7 +160,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetEarningsDate()
         {
-            var data = _yahooFinanceTarget.GetEarningsDate(_ticker);
+            var data = yahooFinanceTarget.GetEarningsDate(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -167,7 +169,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetExDividendDate()
         {
-            var data = _yahooFinanceTarget.GetExDividendDate(_ticker);
+            var data = yahooFinanceTarget.GetExDividendDate(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -176,7 +178,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetOneYearTarget()
         {
-            var data = _yahooFinanceTarget.GetOneYearTarget(_ticker);
+            var data = yahooFinanceTarget.GetOneYearTarget(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -185,7 +187,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetOpen()
         {
-            var data = _yahooFinanceTarget.GetOpen(_ticker);
+            var data = yahooFinanceTarget.GetOpen(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -194,7 +196,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetPERatio()
         {
-            var data = _yahooFinanceTarget.GetPERatio(_ticker);
+            var data = yahooFinanceTarget.GetPERatio(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -203,7 +205,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetPreviousClose()
         {
-            var data = _yahooFinanceTarget.GetPreviousClose(_ticker);
+            var data = yahooFinanceTarget.GetPreviousClose(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -212,7 +214,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetStatMarketCap()
         {
-            var data = _yahooFinanceTarget.GetStatMarketCap(_ticker);
+            var data = yahooFinanceTarget.GetStatMarketCap(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -221,7 +223,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetSummMarketCap()
         {
-            var data = _yahooFinanceTarget.GetSummMarketCap(_ticker);
+            var data = yahooFinanceTarget.GetSummMarketCap(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -230,7 +232,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetVolume()
         {
-            var data = _yahooFinanceTarget.GetVolume(_ticker);
+            var data = yahooFinanceTarget.GetVolume(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);
@@ -239,7 +241,7 @@ namespace FinScrape.Tests
         [Test]
         public void ShouldGetYearsRange()
         {
-            var data = _yahooFinanceTarget.GetYearsRange(_ticker);
+            var data = yahooFinanceTarget.GetYearsRange(ticker);
             Console.WriteLine(data);
 
             Assert.IsNotEmpty(data);

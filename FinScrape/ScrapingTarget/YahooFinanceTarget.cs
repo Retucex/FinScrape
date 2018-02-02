@@ -18,8 +18,6 @@ namespace FinScrape.ScrapingTarget
 				public const string Description = "Col2-9-QuoteModule-Proxy";
 				public const string QuoteHeaderInfo = "quote-header-info";
 				public const string QuoteSummary = "quote-summary";
-
-
 			}
 
 			public struct XPath
@@ -114,28 +112,24 @@ namespace FinScrape.ScrapingTarget
 			}
 		}
 
-		readonly IWebDriver _driver;
-		readonly WebDriverWait _wait;
-		readonly Actions _actions;
-		string _quoteHeaderInfo;
-		string _quoteSummary;
-		string _lastTicker;
+		readonly IWebPageRenderer webPageRenderer;
+		string quoteHeaderInfo;
+		string quoteSummary;
+		string lastTicker;
 
-		public YahooFinanceTarget(IWebDriver driver, WebDriverWait wait, Actions actions)
+		public YahooFinanceTarget(IWebPageRenderer webPageRenderer)
 		{
-			_driver = driver;
-			_wait = wait;
-			_actions = actions;
+			this.webPageRenderer = webPageRenderer;
 		}
 
 		public string GetQuoteHeaderInfo(string ticker)
 		{
-			if (ticker != _lastTicker)
-				_quoteHeaderInfo = SeleniumHelper.GetElemByID(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.ID.QuoteHeaderInfo).Text;
+			if (ticker != lastTicker)
+				quoteHeaderInfo = webPageRenderer.GetElemByID(GetSummaryUrl(ticker), SummaryPage.ID.QuoteHeaderInfo).Text;
 
-            _lastTicker = ticker;
+            lastTicker = ticker;
 
-            return _quoteHeaderInfo;
+            return quoteHeaderInfo;
 		}
 
 
@@ -160,58 +154,53 @@ Trade prices are not sourced from all markets
         //*/
         public string GetQuoteSummary(string ticker)
 		{
-			if (ticker != _lastTicker)
-				_quoteSummary = SeleniumHelper.GetElemByID(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.ID.QuoteSummary).Text;
+			if (ticker != lastTicker)
+				quoteSummary = webPageRenderer.GetElemByID(GetSummaryUrl(ticker), SummaryPage.ID.QuoteSummary).Text;
 
-		    _lastTicker = ticker;
+		    lastTicker = ticker;
 
-		    return _quoteSummary;
+		    return quoteSummary;
 		}
 
-		public string GetDescription(string ticker)
-			=> SeleniumHelper.GetElemByID(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.ID.Description).Text;
+		public string GetDescription(string ticker) => webPageRenderer.GetElemByID(GetSummaryUrl(ticker), SummaryPage.ID.Description).Text;
 
-		public string GetName(string ticker)
-			=> GetQuoteHeaderInfo(ticker).Split('\n')[0].Trim();
+		public string GetName(string ticker) => GetQuoteHeaderInfo(ticker).Split('\n')[0].Trim();
 
-		public string GetPrice(string ticker)
-            => GetQuoteHeaderInfo(ticker).Split('\n')[3].Trim();
+		public string GetPrice(string ticker) => GetQuoteHeaderInfo(ticker).Split('\n')[3].Trim();
 
-        public string GetPreviousClose(string ticker)
-			=> SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.PrevClose).Text;
+        public string GetPreviousClose(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.PrevClose).Text;
 
-		public string GetOpen(string ticker)
-			=> SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.Open).Text;
+		public string GetOpen(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.Open).Text;
 
-		public string GetBid(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.Bid).Text;
+		public string GetBid(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.Bid).Text;
 
-		public string GetAsk(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.Ask).Text;
+		public string GetAsk(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.Ask).Text;
 
-		public string GetDaysRange(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.DaysRange).Text;
+		public string GetDaysRange(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.DaysRange).Text;
 
-		public string GetYearsRange(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.YearsRange).Text;
+		public string GetYearsRange(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.YearsRange).Text;
 
-		public string GetVolume(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.Volume).Text;
+		public string GetVolume(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.Volume).Text;
 
-		public string GetAvgVolume(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.AvgVolume).Text;
+		public string GetAvgVolume(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.AvgVolume).Text;
 
-		public string GetSummMarketCap(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.MarketCap).Text;
+		public string GetSummMarketCap(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.MarketCap).Text;
 
-		public string GetBeta(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.Beta).Text;
+		public string GetBeta(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.Beta).Text;
 
-		public string GetPERatio(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.PERatio).Text;
+		public string GetPERatio(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.PERatio).Text;
 
-		public string GetEPSRatio(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.EPSRatio).Text;
+		public string GetEPSRatio(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.EPSRatio).Text;
 
-		public string GetStatMarketCap(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetStatisticUrl(ticker), StatisticsPage.XPath.MarketCap).Text;
+		public string GetStatMarketCap(string ticker) => webPageRenderer.GetElemByXPath(GetStatisticUrl(ticker), StatisticsPage.XPath.MarketCap).Text;
 
-		public string GetEarningsDate(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.EarningsDate).Text;
+		public string GetEarningsDate(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.EarningsDate).Text;
 
-		public string GetDividendAndYield(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.DividendAndYield).Text;
+		public string GetDividendAndYield(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.DividendAndYield).Text;
 
-		public string GetExDividendDate(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.ExDividendDate).Text;
+		public string GetExDividendDate(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.ExDividendDate).Text;
 
-		public string GetOneYearTarget(string ticker) => SeleniumHelper.GetElemByXPath(_driver, _wait, _actions, GetSummaryUrl(ticker), SummaryPage.XPath.OneYearTarget).Text;
+		public string GetOneYearTarget(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.OneYearTarget).Text;
 
 		public string GetTargetName() => "Yahoo Finance";
 
