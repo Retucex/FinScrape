@@ -1,9 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using FinScrape;
 using FinScrape.ScrapingTarget;
 using NUnit.Framework;
 using OpenQA.Selenium;
@@ -13,7 +8,7 @@ using OpenQA.Selenium.Support.UI;
 
 namespace FinScrape.Tests
 {
-    [TestFixture]
+	[TestFixture]
     public class YahooFinanceTargetTest
     {
         IWebDriver driver;
