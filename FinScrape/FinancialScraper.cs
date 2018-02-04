@@ -27,7 +27,7 @@ namespace FinScrape
 
 			try
 			{
-				company.Description = scrapingTarget.GetDescription(ticker);
+				company.Description = scrapingTarget.Description;
 				Log.Debug("Successfully scraped description: {description}", company.Description);
 			}
 			catch (Exception e)
@@ -38,7 +38,7 @@ namespace FinScrape
 
             try
             {
-                company.Price = scrapingTarget.GetPrice(ticker);
+	            company.Price = scrapingTarget.Price;
                 Log.Debug("Successfully scraped price: {price}", company.Price);
             }
             catch (Exception e)

@@ -15,12 +15,11 @@ namespace FinScrape.Tests
         WebDriverWait wait;
         Actions actions;
         YahooFinanceTarget yahooFinanceTarget;
-        string ticker;
         
         [OneTimeSetUp]
         public void TestSetup()
         {
-            var options = new ChromeOptions();
+			var options = new ChromeOptions();
             options.AddArgument("headless");
             options.AddArgument("--log-level=3");
             options.AddArgument("--silent");
@@ -31,9 +30,7 @@ namespace FinScrape.Tests
 
 			var webPageRenderer = new SeleniumWebPageRenderer(driver, wait, actions);
 
-            yahooFinanceTarget = new YahooFinanceTarget(webPageRenderer);
-
-            ticker = "wmt";
+            yahooFinanceTarget = new YahooFinanceTarget(webPageRenderer, "wmt");
         }
 
         [OneTimeTearDown]
@@ -43,203 +40,144 @@ namespace FinScrape.Tests
             driver = null;
         }
 
-        [Test]
-        public void ShouldGetQuoteHeaderInfo()
-        {
-            var data = yahooFinanceTarget.GetQuoteHeaderInfo(ticker);
-            Console.WriteLine(data);
+		[Test]
+	    public void DescriptionTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.Description);
+			Assert.IsNotEmpty(yahooFinanceTarget.Description);
+	    }
 
-            Assert.IsNotEmpty(data);
-        }
+		[Test]
+	    public void NameTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.Name);
+		    Assert.IsNotEmpty(yahooFinanceTarget.Name);
+	    }
 
-        [Test]
-        public void ShouldGetQuoteSummary()
-        {
-            var data = yahooFinanceTarget.GetQuoteSummary(ticker);
-            Console.WriteLine(data);
+	    [Test]
+		public void PriceTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.Price);
+		    Assert.IsNotEmpty(yahooFinanceTarget.Price);
+	    }
 
-            Assert.IsNotEmpty(data);
-        }
+	    [Test]
+		public void PreviousCloseTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.PreviousClose);
+		    Assert.IsNotEmpty(yahooFinanceTarget.PreviousClose);
+	    }
 
-        [Test]
-        public void ShouldGetNameCompany()
-        {
-            var data = yahooFinanceTarget.GetName(ticker);
-            Console.WriteLine(data);
+	    [Test]
+		public void OpenTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.Open);
+		    Assert.IsNotEmpty(yahooFinanceTarget.Open);
+	    }
 
-            Assert.IsNotEmpty(data);
-        }
+	    [Test]
+		public void BidTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.Bid);
+		    Assert.IsNotEmpty(yahooFinanceTarget.Bid);
+	    }
 
-        [Test]
-        public void ShouldGetPrice()
-        {
-            var data = yahooFinanceTarget.GetPrice(ticker);
-            Console.WriteLine(data);
+	    [Test]
+		public void AskTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.Ask);
+		    Assert.IsNotEmpty(yahooFinanceTarget.Ask);
+	    }
 
-            Assert.IsNotEmpty(data);
-        }
+	    [Test]
+		public void DaysRangeTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.DaysRange);
+		    Assert.IsNotEmpty(yahooFinanceTarget.DaysRange);
+	    }
 
-        [Test]
-        public void ShouldGetAsk()
-        {
-            var data = yahooFinanceTarget.GetAsk(ticker);
-            Console.WriteLine(data);
+	    [Test]
+		public void YearsRangeTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.YearsRange);
+		    Assert.IsNotEmpty(yahooFinanceTarget.YearsRange);
+	    }
 
-            Assert.IsNotEmpty(data);
-        }
+	    [Test]
+		public void VolumeTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.Volume);
+		    Assert.IsNotEmpty(yahooFinanceTarget.Volume);
+	    }
 
+	    [Test]
+		public void AvgVolumeTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.AvgVolume);
+		    Assert.IsNotEmpty(yahooFinanceTarget.AvgVolume);
+	    }
 
-        [Test]
-        public void ShouldGetAvgVolume()
-        {
-            var data = yahooFinanceTarget.GetAvgVolume(ticker);
-            Console.WriteLine(data);
+	    [Test]
+		public void SummMarketCapTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.SummMarketCap);
+		    Assert.IsNotEmpty(yahooFinanceTarget.SummMarketCap);
+	    }
 
-            Assert.IsNotEmpty(data);
-        }
+	    [Test]
+		public void BetaTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.Beta);
+		    Assert.IsNotEmpty(yahooFinanceTarget.Beta);
+	    }
 
-        [Test]
-        public void ShouldGetBeta()
-        {
-            var data = yahooFinanceTarget.GetBeta(ticker);
-            Console.WriteLine(data);
+	    [Test]
+		public void PERatioTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.PERatio);
+		    Assert.IsNotEmpty(yahooFinanceTarget.PERatio);
+	    }
 
-            Assert.IsNotEmpty(data);
-        }
+	    [Test]
+		public void EPSRatioTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.EPSRatio);
+		    Assert.IsNotEmpty(yahooFinanceTarget.EPSRatio);
+	    }
 
-        [Test]
-        public void ShouldGetBid()
-        {
-            var data = yahooFinanceTarget.GetBid(ticker);
-            Console.WriteLine(data);
+	    [Test]
+		public void StatMarketCapTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.StatMarketCap);
+		    Assert.IsNotEmpty(yahooFinanceTarget.StatMarketCap);
+	    }
 
-            Assert.IsNotEmpty(data);
-        }
+	    [Test]
+		public void EarningsDateTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.EarningsDate);
+		    Assert.IsNotEmpty(yahooFinanceTarget.EarningsDate);
+	    }
 
-        [Test]
-        public void ShouldGetDaysRange()
-        {
-            var data = yahooFinanceTarget.GetDaysRange(ticker);
-            Console.WriteLine(data);
+	    [Test]
+		public void DividendAndYieldTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.DividendAndYield);
+		    Assert.IsNotEmpty(yahooFinanceTarget.DividendAndYield);
+	    }
 
-            Assert.IsNotEmpty(data);
-        }
+	    [Test]
+		public void ExDividendDateTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.ExDividendDate);
+		    Assert.IsNotEmpty(yahooFinanceTarget.ExDividendDate);
+	    }
 
-        [Test]
-        public void ShouldGetDescription()
-        {
-            var data = yahooFinanceTarget.GetDescription(ticker);
-            Console.WriteLine(data);
-
-            Assert.IsNotEmpty(data);
-        }
-
-        [Test]
-        public void ShouldGetDividendAndYield()
-        {
-            var data = yahooFinanceTarget.GetDividendAndYield(ticker);
-            Console.WriteLine(data);
-
-            Assert.IsNotEmpty(data);
-        }
-
-        [Test]
-        public void ShouldGetEPSRatio()
-        {
-            var data = yahooFinanceTarget.GetEPSRatio(ticker);
-            Console.WriteLine(data);
-
-            Assert.IsNotEmpty(data);
-        }
-
-        [Test]
-        public void ShouldGetEarningsDate()
-        {
-            var data = yahooFinanceTarget.GetEarningsDate(ticker);
-            Console.WriteLine(data);
-
-            Assert.IsNotEmpty(data);
-        }
-
-        [Test]
-        public void ShouldGetExDividendDate()
-        {
-            var data = yahooFinanceTarget.GetExDividendDate(ticker);
-            Console.WriteLine(data);
-
-            Assert.IsNotEmpty(data);
-        }
-
-        [Test]
-        public void ShouldGetOneYearTarget()
-        {
-            var data = yahooFinanceTarget.GetOneYearTarget(ticker);
-            Console.WriteLine(data);
-
-            Assert.IsNotEmpty(data);
-        }
-
-        [Test]
-        public void ShouldGetOpen()
-        {
-            var data = yahooFinanceTarget.GetOpen(ticker);
-            Console.WriteLine(data);
-
-            Assert.IsNotEmpty(data);
-        }
-
-        [Test]
-        public void ShouldGetPERatio()
-        {
-            var data = yahooFinanceTarget.GetPERatio(ticker);
-            Console.WriteLine(data);
-
-            Assert.IsNotEmpty(data);
-        }
-
-        [Test]
-        public void ShouldGetPreviousClose()
-        {
-            var data = yahooFinanceTarget.GetPreviousClose(ticker);
-            Console.WriteLine(data);
-
-            Assert.IsNotEmpty(data);
-        }
-
-        [Test]
-        public void ShouldGetStatMarketCap()
-        {
-            var data = yahooFinanceTarget.GetStatMarketCap(ticker);
-            Console.WriteLine(data);
-
-            Assert.IsNotEmpty(data);
-        }
-
-        [Test]
-        public void ShouldGetSummMarketCap()
-        {
-            var data = yahooFinanceTarget.GetSummMarketCap(ticker);
-            Console.WriteLine(data);
-
-            Assert.IsNotEmpty(data);
-        }
-
-        [Test]
-        public void ShouldGetVolume()
-        {
-            var data = yahooFinanceTarget.GetVolume(ticker);
-            Console.WriteLine(data);
-
-            Assert.IsNotEmpty(data);
-        }
-
-        [Test]
-        public void ShouldGetYearsRange()
-        {
-            var data = yahooFinanceTarget.GetYearsRange(ticker);
-            Console.WriteLine(data);
-
-            Assert.IsNotEmpty(data);
-        }
-    }
+	    [Test]
+		public void OneYearTargetTest()
+	    {
+		    Console.WriteLine(yahooFinanceTarget.OneYearTarget);
+		    Assert.IsNotEmpty(yahooFinanceTarget.OneYearTarget);
+	    }
+	}
 }

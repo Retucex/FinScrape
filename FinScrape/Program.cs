@@ -16,7 +16,7 @@ namespace FinScrape
 			ConfigureLogger();
 
 			Log.Debug("Arguments passed in: {args}", args);
-			var target = new YahooFinanceTarget(InitSeleniumWebPageRenderer());
+			var target = new YahooFinanceTarget(InitSeleniumWebPageRenderer(), args[0]);
 			var finScraper = new FinancialScraper(target);
 			finScraper.ScrapeTickers(args);
 

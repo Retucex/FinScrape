@@ -1,4 +1,6 @@
-﻿namespace FinScrape.ScrapingTarget
+﻿using Serilog;
+
+namespace FinScrape.ScrapingTarget
 {
 	public class YahooFinanceTarget : IScrapingTarget
 	{
@@ -72,7 +74,7 @@
 		{
 			public struct ID
 			{
-
+				public const string KeyStatisticsID = "Col1-0-KeyStatistics-Proxy";
 			}
 
 			public struct XPath
@@ -103,97 +105,109 @@
 			}
 		}
 
+		public string Ticker
+		{
+			get => ticker;
+			set
+			{
+				ticker = value;
+				GetQuoteInfos();
+			}
+
+		}
+
+		public string Description { get; private set; }
+
+		public string Name { get; private set; }
+
+		public string Price { get; private set; }
+
+		public string PreviousClose { get; private set; }
+
+		public string Open { get; private set; }
+
+		public string Bid { get; private set; }
+
+		public string Ask { get; private set; }
+
+		public string DaysRange { get; private set; }
+
+		public string YearsRange { get; private set; }
+
+		public string Volume { get; private set; }
+
+		public string AvgVolume { get; private set; }
+
+		public string SummMarketCap { get; private set; }
+
+		public string Beta { get; private set; }
+
+		public string PERatio { get; private set; }
+
+		public string EPSRatio { get; private set; }
+
+		public string StatMarketCap { get; private set; }
+
+		public string EarningsDate { get; private set; }
+
+		public string DividendAndYield { get; private set; }
+
+		public string ExDividendDate { get; private set; }
+
+		public string OneYearTarget { get; private set; }
+
 		readonly IWebPageRenderer webPageRenderer;
 		string quoteHeaderInfo;
 		string quoteSummary;
-		string lastTicker;
+		string quoteKeyStatistics;
+		string ticker;
 
-		public YahooFinanceTarget(IWebPageRenderer webPageRenderer)
+		public YahooFinanceTarget(IWebPageRenderer webPageRenderer, string ticker)
 		{
 			this.webPageRenderer = webPageRenderer;
+			Ticker = ticker;
 		}
 
-		public string GetQuoteHeaderInfo(string ticker)
+		void GetQuoteInfos()
 		{
-			if (ticker != lastTicker)
-				quoteHeaderInfo = webPageRenderer.GetElemByID(GetSummaryUrl(ticker), SummaryPage.ID.QuoteHeaderInfo).Text;
+			quoteHeaderInfo = webPageRenderer.GetElemByID(GetSummaryUrl(Ticker), SummaryPage.ID.QuoteHeaderInfo).Text;
+			Log.Debug("Fetched quoteHeaderInfo for {ticker}: {quoteHeaderInfo}", Ticker, quoteHeaderInfo);
 
-            lastTicker = ticker;
+			quoteSummary = webPageRenderer.GetElemByID(GetSummaryUrl(Ticker), SummaryPage.ID.QuoteSummary).Text;
+			Log.Debug("Fetched quoteSummary for {ticker}: {quoteSummary}", Ticker, quoteSummary);
 
-            return quoteHeaderInfo;
+			quoteKeyStatistics = webPageRenderer.GetElemByID(GetStatisticUrl(Ticker), StatisticsPage.ID.KeyStatisticsID).Text;
+			Log.Debug("Fetched quoteStatistics for {ticker}: {quoteKeyStatistics}", Ticker, quoteKeyStatistics);
+
+
+			//TODO Change target from summary page to profile page
+			Description = webPageRenderer.GetElemByID(GetSummaryUrl(ticker), SummaryPage.ID.Description).Text;
+
+			ParseQuoteInfos();
 		}
 
-
-        /* Example output:
-Previous Close 106.60
-Open 107.00
-Bid 0.00 x 0
-Ask 0.00 x 0
-Day's Range 106.68 - 108.41
-52 Week Range 65.63 - 108.41
-Volume 6,786,305
-Avg. Volume 8,923,319
-Market Cap 321.092B
-Beta 0.10
-PE Ratio (TTM) 28.77
-EPS (TTM) 3.77
-Earnings Date Feb 20, 2018
-Forward Dividend & Yield 2.04 (1.91%)
-Ex-Dividend Date 2017-12-07
-1y Target Est 105.13
-Trade prices are not sourced from all markets
-        //*/
-        public string GetQuoteSummary(string ticker)
+		void ParseQuoteInfos()
 		{
-			if (ticker != lastTicker)
-				quoteSummary = webPageRenderer.GetElemByID(GetSummaryUrl(ticker), SummaryPage.ID.QuoteSummary).Text;
+			Name = quoteHeaderInfo.Split('\n')[0].Trim();
+			Price = quoteHeaderInfo.Split('\n')[3].Split('+', '-')[0].Trim();
 
-		    lastTicker = ticker;
-
-		    return quoteSummary;
+			PreviousClose = quoteSummary.Split('\n')[0].Substring("Previous Close".Length).Trim();
+			Open = quoteSummary.Split('\n')[1].Substring("Open".Length).Trim();
+			Bid = quoteSummary.Split('\n')[2].Substring("Bid".Length).Trim();
+			Ask = quoteSummary.Split('\n')[3].Substring("Ask".Length).Trim();
+			DaysRange = quoteSummary.Split('\n')[4].Substring("Day's Range".Length).Trim();
+			YearsRange = quoteSummary.Split('\n')[5].Substring("52 Week Range".Length).Trim();
+			Volume = quoteSummary.Split('\n')[6].Substring("Volume".Length).Trim();
+			AvgVolume = quoteSummary.Split('\n')[7].Substring("Avg. Volume".Length).Trim();
+			SummMarketCap = quoteSummary.Split('\n')[8].Substring("Market Cap".Length).Trim();
+			Beta = quoteSummary.Split('\n')[9].Substring("Beta".Length).Trim();
+			PERatio = quoteSummary.Split('\n')[10].Substring("PE Ratio (TTM)".Length).Trim();
+			EPSRatio = quoteSummary.Split('\n')[11].Substring("EPS (TTM)".Length).Trim();
+			EarningsDate = quoteSummary.Split('\n')[12].Substring("Earnings Date".Length).Trim();
+			DividendAndYield = quoteSummary.Split('\n')[13].Substring("Forward Dividend & Yield".Length).Trim();
+			ExDividendDate = quoteSummary.Split('\n')[14].Substring("Ex-Dividend Date".Length).Trim();
+			OneYearTarget = quoteSummary.Split('\n')[15].Substring("1y Target Est".Length).Trim();
 		}
-
-		public string GetDescription(string ticker) => webPageRenderer.GetElemByID(GetSummaryUrl(ticker), SummaryPage.ID.Description).Text;
-
-		public string GetName(string ticker) => GetQuoteHeaderInfo(ticker).Split('\n')[0].Trim();
-
-		public string GetPrice(string ticker) => GetQuoteHeaderInfo(ticker).Split('\n')[3].Trim();
-
-        public string GetPreviousClose(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.PrevClose).Text;
-
-		public string GetOpen(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.Open).Text;
-
-		public string GetBid(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.Bid).Text;
-
-		public string GetAsk(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.Ask).Text;
-
-		public string GetDaysRange(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.DaysRange).Text;
-
-		public string GetYearsRange(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.YearsRange).Text;
-
-		public string GetVolume(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.Volume).Text;
-
-		public string GetAvgVolume(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.AvgVolume).Text;
-
-		public string GetSummMarketCap(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.MarketCap).Text;
-
-		public string GetBeta(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.Beta).Text;
-
-		public string GetPERatio(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.PERatio).Text;
-
-		public string GetEPSRatio(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.EPSRatio).Text;
-
-		public string GetStatMarketCap(string ticker) => webPageRenderer.GetElemByXPath(GetStatisticUrl(ticker), StatisticsPage.XPath.MarketCap).Text;
-
-		public string GetEarningsDate(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.EarningsDate).Text;
-
-		public string GetDividendAndYield(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.DividendAndYield).Text;
-
-		public string GetExDividendDate(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.ExDividendDate).Text;
-
-		public string GetOneYearTarget(string ticker) => webPageRenderer.GetElemByXPath(GetSummaryUrl(ticker), SummaryPage.XPath.OneYearTarget).Text;
-
-		public string GetTargetName() => "Yahoo Finance";
 
 		string GetSummaryUrl(string ticker) => $"https://finance.yahoo.com/quote/{ticker}?p={ticker}";
 

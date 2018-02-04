@@ -39,7 +39,7 @@ namespace FinScrape
 			}
 			catch (Exception e)
 			{
-				Log.Error(e, "Unable to navigate to element.");
+				Log.Error(e, "Unable to navigate to element {id}.", id);
 			}
 
 			return elem;
